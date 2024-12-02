@@ -1,0 +1,17 @@
+.blogImage {
+  height: 150px;
+  width: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: solid 5px;
+}
+
+.post img { width: 100% }
+
+footer a {
+  color: #FFBF00;
+}
+
+.blog-list .item .post-thumb {
+  max-width:100px;
+}

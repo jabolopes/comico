@@ -5,30 +5,16 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"time"
 )
 
 const (
-	templateName         = "templates/index.template"
+	pageTemplateName     = "templates/page.template"
 	allPostsTemplateName = "templates/all_posts.template"
-	allTagsTemplateName  = "templates/all_tags.template"
-	contentTemplateName  = "templates/content.template"
-	feedTemplateName     = "templates/feed.template"
 	postTemplateName     = "templates/post.template"
 
 	markdownProgram = "bin/Markdown.pl"
 
-	indexPostsNum = 10
-
-	indexFilename = "index.html"
-	feedFilename  = "feed.rss"
-
-	genTagTitleFormat   = `%s &mdash; Posts tagged "%s"`
-	allPostsTitleFormat = `%s &mdash; All posts`
-	allTagsTitleFormat  = `%s &mdash; All tags`
-
-	feedDateFormat = time.RFC1123Z
-	postDateFormat = "January 02, 2006"
+	postDateFormat = "2006/01/02"
 
 	outputDirectory      = "out"
 	outputDistDirectory  = "out/dist"
@@ -37,16 +23,17 @@ const (
 	authorEmail     = "jadesmith@email.com"
 	authorName      = "Jade Smith"
 	authorURL       = "https://github.com/jadesmith"
-	blogDescription = "Jade Smith's cool blogo"
+	blogDescription = "Jade Smith's cool comic"
+	blogImage       = "images/cpphs-thumbnail.jpg"
 	blogLanguage    = "en"
-	blogName        = "Cool Blogo"
-	blogURL         = "http://jadesmith.blogo"
+	blogName        = "Cool comic"
 	license         = "&copy;"
 )
 
 var blogConfig = map[string]interface{}{
 	"Title":           blogName,
 	"BlogDescription": blogDescription,
+	"BlogImage":       blogImage,
 	"BlogLanguage":    blogLanguage,
 	"BlogName":        blogName,
 	"License":         license,
@@ -59,11 +46,7 @@ func main() {
 	ctx := context.Background()
 
 	genAllPostsCmd := flag.NewFlagSet("gen-all-posts", flag.ExitOnError)
-	genAllTagsCmd := flag.NewFlagSet("gen-all-tags", flag.ExitOnError)
-	genFeedCmd := flag.NewFlagSet("gen-feed", flag.ExitOnError)
-	genIndexCmd := flag.NewFlagSet("gen-index", flag.ExitOnError)
 	genPostCmd := flag.NewFlagSet("gen-post", flag.ExitOnError)
-	genTagCmd := flag.NewFlagSet("gen-tag", flag.ExitOnError)
 	postifyCmd := flag.NewFlagSet("postify", flag.ExitOnError)
 
 	if len(os.Args) < 2 {
@@ -76,16 +59,7 @@ func main() {
 	switch command {
 	case "gen-all-posts":
 		genAllPostsCmd.Parse(os.Args[2:])
-		err = genAllPosts(genAllPostsCmd.Args())
-	case "gen-all-tags":
-		genAllTagsCmd.Parse(os.Args[2:])
-		err = genAllTags(genAllTagsCmd.Args())
-	case "gen-feed":
-		genFeedCmd.Parse(os.Args[2:])
-		err = genFeed(genFeedCmd.Args())
-	case "gen-index":
-		genIndexCmd.Parse(os.Args[2:])
-		err = genIndex(genIndexCmd.Args())
+		err = genAllPosts()
 
 	case "gen-post":
 		genPostCmd.Parse(os.Args[2:])
@@ -98,11 +72,6 @@ func main() {
 
 		err = genPost(args[0])
 
-	case "gen-tag":
-		genTagCmd.Parse(os.Args[2:])
-
-		err = genTag(genTagCmd.Args())
-
 	case "postify":
 		postifyCmd.Parse(os.Args[2:])
 
@@ -112,6 +81,7 @@ func main() {
 		}
 
 		err = postify(ctx, postifyCmd.Args()[0])
+
 	default:
 		fmt.Fprintf(os.Stderr, "unknown command %q\n", command)
 		os.Exit(1)
