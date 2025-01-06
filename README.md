@@ -8,6 +8,8 @@ A simple program to create comic blogs.
 
 Inspired by [bashblog](https://github.com/cfenollosa/bashblog).
 
+To create general blogs see [blogo](http://github.com/jabolopes/blogo).
+
 ## Usage
 
 1. Download and install the [Go toolchain](https://go.dev/doc/install) (if not
