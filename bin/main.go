@@ -12,9 +12,11 @@ const (
 	allPostsTemplateName = "templates/all_posts.template"
 	postTemplateName     = "templates/post.template"
 
-	markdownProgram = "bin/Markdown.pl"
 
-	postDateFormat = "2006/01/02"
+	// Date format that the author uses in the Markdown posts.
+	postParseDateFormat = "2006/01/02"
+	// Date format that the final rendered blog uses.
+	postDisplayDateFormat = "January 02, 2006"
 
 	outputDirectory      = "out"
 	outputDistDirectory  = "out/dist"
@@ -31,15 +33,16 @@ const (
 )
 
 var blogConfig = map[string]interface{}{
-	"Title":           blogName,
-	"BlogDescription": blogDescription,
-	"BlogImage":       blogImage,
-	"BlogLanguage":    blogLanguage,
-	"BlogName":        blogName,
-	"License":         license,
-	"AuthorURL":       authorURL,
-	"AuthorName":      authorName,
-	"AuthorEmail":     authorEmail,
+	"Title":                  blogName,
+	"BlogDescription":        blogDescription,
+	"BlogImage":              blogImage,
+	"BlogLanguage":           blogLanguage,
+	"BlogName":               blogName,
+	"License":                license,
+	"AuthorURL":              authorURL,
+	"AuthorName":             authorName,
+	"AuthorEmail":            authorEmail,
+	"PostDisplayDateFormat":  postDisplayDateFormat,
 }
 
 func main() {

@@ -1,29 +1,40 @@
 package main
 
 import (
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 )
+
+type Tag struct {
+	// Tag name, e.g., 'poetry', 'type theory', etc.
+	Name string
+}
+
+// Href returns the relative URL for a tag.
+func (t Tag) Href() string {
+	return fmt.Sprintf("tag_%s.html", url.QueryEscape(t.Name))
+}
 
 type Post struct {
 	// './mypage.html'
 	PostURL string
 	// 'Post title'
 	PostTitle string
-	// 'November 4, 2022'.
-	PostDate string
-	// Parsed 'PostDate'.
-	ParsedDate time.Time
+	// Date of the post.
+	Date time.Time
 	// 'path/to/image.png'
 	PostImage string
 	// Tags, e.g., 'poetry', 'prose'.
-	Tags []string
+	Tags []Tag
 	// e.g., 'mypost.md'
 	MarkdownFilename string
 	// Post content without the title, date, tags, etc.
@@ -39,6 +50,14 @@ func postifiedFilename(filename string) string {
 	filename = strings.TrimSuffix(filename, ".")
 	filename = filename + ".post"
 	return path.Join(outputPostsDirectory, filename)
+}
+
+func comparePostsDescending(p1, p2 Post) int {
+	// Sort in descending order (newest to oldest).
+	if n := p2.Date.Compare(p1.Date); n != 0 {
+		return n
+	}
+	return cmp.Compare(p1.PostTitle, p2.PostTitle)
 }
 
 func loadPost(filename string) (Post, error) {
@@ -76,6 +95,17 @@ func loadAllPosts() ([]Post, error) {
 
 		posts = append(posts, post)
 	}
+
+	return posts, nil
+}
+
+func loadAllPostsSortedDescending() ([]Post, error) {
+	posts, err := loadAllPosts()
+	if err != nil {
+		return nil, err
+	}
+
+	slices.SortFunc(posts, comparePostsDescending)
 
 	return posts, nil
 }
